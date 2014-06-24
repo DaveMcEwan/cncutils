@@ -97,3 +97,47 @@ Segment curve into N lines where N is the order of the curve, and accumulate
     pts = pts_on_bezier_curve(P, n_seg)
     return sum([distance_between_pts(pts[i], pts[i+1]) for i in range(n_seg)])
 
+
+def dir_on_bezier_curve(P=[(0.0, 0.0)], t=0.5):
+    '''Return direction at t on bezier curve defined by control points P.
+List of vectors per pair of dimensions are returned in radian.
+E.g. Where X is "right", Y is "up", Z is "in" on a computer screen, and
+  returned value is [pi/4, -pi/4], then the vector will be coming out the
+  screen over the viewer's right shoulder.
+    '''
+    assert isinstance(P, list)
+    assert len(P) > 0
+    if not len(P) > 1:
+        return None # Points have no gradient.
+    for p in P:
+        assert isinstance(p, tuple)
+        for i in p:
+            assert len(p) > 1
+            assert isinstance(i, float)
+    assert isinstance(t, float)
+    assert 0 <= t <= 1
+    
+    O = len(P) - 1 # Order of curve
+    
+    # Recurse down the orders calculating the next set of control points until
+    #   there are only two left, which is the points on the gradient we want.
+    Q = P
+    while O > 1:
+        Q = [pt_between_pts(Q[l], Q[l+1], t) for l in range(O)]
+        O -= 1
+    
+    assert len(Q) == 2
+    # Now that we have the two points in N dimensions, we can reduce to the
+    #   gradients on N-1 planes.
+    q0 = Q[0]
+    q1 = Q[1]
+    N = len(q0)
+    
+    # Difference used for calculating gradient, giving 2 quadrants of direction.
+    delta = [q1[i] - q0[i] for i in range(N)]
+    
+    # 180 degree offset to add, giving all 4 quadrants of this pair of
+    #   dimensions.
+    semiturn = [pi * int(q1[p] < q0[p]) for p in range(N-1)]
+    
+    return [atan(delta[p+1] / delta[p]) + semiturn[p] for p in range(N-1)]
