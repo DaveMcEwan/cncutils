@@ -65,7 +65,7 @@ def cherrymx_profile(
         pts.reverse()
     
     # Rotate points around origin here.
-    pts = pts_rotate(pts, rotate, (0.0, 0.0))
+    pts = pts_rotate(pts, [rotate], (0.0, 0.0))
     
     # Initialise gcode lines.
     g = []

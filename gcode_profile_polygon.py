@@ -21,7 +21,7 @@ Return spindle to starting position.
     assert isinstance(clearance, float) and clearance > 0.0
     
     # Use points to calculate the relative movements.
-    rels = pts_to_rels(pts)
+    rels = vectors_between_pts(pts)
     
     # Move to start XY.
     g = []
@@ -77,7 +77,7 @@ def polygon_profile(
     assert isinstance(plungerate, float) and plungerate > 0.0
     
     # Use points to calculate the relative movements.
-    rels = pts_to_rels(pts)
+    rels = vectors_between_pts(pts)
     
     # Build list of cut depths.
     cuts = [(depth % pitch)] + [pitch for l in range(int(depth / pitch))]

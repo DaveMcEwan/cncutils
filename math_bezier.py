@@ -1,40 +1,6 @@
 # Math functions for calculating bezier curves in N dimensions.
 
-import math
-
-
-def pt_between_pts(a=(0.0, 0.0), b=(0.0, 0.0), t=0.5):
-    '''Return the point between two points on N dimensions.
-    '''
-    assert isinstance(a, tuple)
-    assert isinstance(b, tuple)
-    assert len(a) > 1
-    assert len(a) == len(b)
-    for i in a:
-        assert isinstance(i, float)
-    for i in b:
-        assert isinstance(i, float)
-    assert isinstance(t, float)
-    assert 0 <= t <= 1
-    
-    L = len(a)
-    return tuple([ ((b[i] - a[i]) * t) + a[i] for i in range(L) ])
-
-
-def distance_between_pts(a=(0.0, 0.0), b=(0.0, 0.0)):
-    '''Return the distance between two points on N dimensions (Euclidean distance).
-    '''
-    assert isinstance(a, tuple)
-    assert isinstance(b, tuple)
-    assert len(a) > 1
-    assert len(a) == len(b)
-    for i in a:
-        assert isinstance(i, float)
-    for i in b:
-        assert isinstance(i, float)
-    
-    L = len(a)
-    return math.sqrt(sum([(b[i] - a[i])**2 for i in range(L)]))
+from math_base import *
 
 
 def pt_on_bezier_curve(P=[(0.0, 0.0)], t=0.5):
@@ -141,3 +107,4 @@ E.g. Where X is "right", Y is "up", Z is "in" on a computer screen, and
     semiturn = [pi * int(q1[p] < q0[p]) for p in range(N-1)]
     
     return [atan(delta[p+1] / delta[p]) + semiturn[p] for p in range(N-1)]
+
