@@ -124,7 +124,7 @@ if __name__ == '__main__':
     
     parser.add_argument('--notch_depth',
                         action='store',
-                        default=1.5,
+                        default=0.8,
                         type=float,
                         help='notch depth')
     
