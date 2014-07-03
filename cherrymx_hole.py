@@ -48,17 +48,17 @@ def cherrymx_points(
 # }}}
 
 def cherrymx_profile(
-                     width=14.0,
-                     depth=0.0,
-                     notch_depth=0.0,
-                     notch_height=0.0,
+                     width=13.5,
+                     depth=3.0,
+                     notch_depth=0.8,
+                     notch_height=4.0,
                      rotate=0.0,
-                     pitch=0.0,
-                     feedrate=0.0,
-                     plungerate=0.0,
-                     clearance=0.0,
-                     endmill=0.0,
-                     direction='',
+                     pitch=1.0,
+                     feedrate=660.0,
+                     plungerate=500.0,
+                     clearance=5.0,
+                     endmill=3.0,
+                     direction='ccw',
                      ablpd=True,
                     ): # {{{
     '''Generate gcode for a hole at the current position to hold cherry mx switches.
@@ -66,8 +66,6 @@ def cherrymx_profile(
 
     assert isinstance(width, float) and width > 0.0
     assert isinstance(depth, float) and depth > 0.0
-    assert notch_depth >= endmill/2
-    assert notch_height >= endmill/2
     assert isinstance(rotate, float) and abs(rotate) <= 2*pi
     assert isinstance(pitch, float) and pitch > 0.0
     assert isinstance(feedrate, float) and feedrate > 0.0
@@ -79,7 +77,7 @@ def cherrymx_profile(
     assert isinstance(direction, str) and direction in ['cw', 'ccw']
     assert isinstance(ablpd, bool)
     
-    pts = cherry_points(width, notch_depth, notch_height, rotate, endmill)
+    pts = cherrymx_points(width, notch_depth, notch_height, rotate, endmill)
     
     # Initialise gcode lines.
     g = []
