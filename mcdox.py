@@ -119,7 +119,22 @@ bottom_right = thumb_mx_holes[2]
 
 mx_holes = thumb_mx_holes + finger_mx_holes
 center = pt_between_pts(top_left[:2], bottom_right[:2])
-radius = distance_between_pts(top_left[:2], center) + spc
+radius = distance_between_pts(top_left[:2], center) + 0.75*spc
+diameter = 2 * radius
+
+# Center whole design about the origin to make zeroing on A4 sheets easier as
+#   there is little margin for error.
+mx_rotates = [h[2] for h in mx_holes]
+mx_points = [(h[0], h[1]) for h in mx_holes]
+mx_points = pts_shift(mx_points, [-center[0], -center[1]])
+mx_holes = [(mx_points[i][0], mx_points[i][1], mx_rotates[i]) for i in range(len(mx_holes))]
+center = (0.0, 0.0)
+# A4 dimensions are 297x210 so to fit nicely on cheap sheets of acrylic try to
+#   keep dimensions down.
+
+n_fix = 6
+fix_holes = gen_polygon_pts(n_fix, [radius-0.5*spc])
+fix_holes = pts_rotate(fix_holes, [3*2*pi/n_fix], center)
 
 # mx_holes is now a list of tuples containing the coordinates and rotations of all switches on LHS.
 out = []
@@ -127,17 +142,19 @@ out += ['Operations:']
 out += ['\tCherryMX holes:']
 for h in mx_holes:
     out += ['\t\t(%0.2f, %0.2f) rotate=%d' % (h[0], h[1], degrees(h[2]))]
-out += ['\tFixing holes: TODO']
+out += ['\tFixing holes:']
+for h in fix_holes:
+    out += ['\t\t(%0.2f, %0.2f)' % (h[0], h[1])]
 out += ['\tLED holes: TODO']
 out += ['\tOuter:']
 out += ['\t\tcenter=(%0.2f, %0.2f)' % center]
 out += ['\t\tradius=%0.2f' % radius]
+out += ['\t\tdiameter=%0.2f' % diameter]
 print('\n'.join(out))
 
-# TODO: Calculate fixing holes.
-# TODO: Plot fixing holes.
 # TODO: Calculate LED holes.
 # TODO: Plot LED holes.
+# TODO: Generate gcode.
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -147,6 +164,11 @@ ax = plt.subplot(111, aspect=1)
 x = [p[0] for p in mx_holes]
 y = [p[1] for p in mx_holes]
 ax.plot(x, y, marker='x', color='r')
+
+# Plot fixing holes.
+x = [p[0] for p in fix_holes]
+y = [p[1] for p in fix_holes]
+ax.plot(x, y, marker='x', color='g')
 
 # Draw circle for outer
 ax.scatter(center[0], center[1])
@@ -159,6 +181,6 @@ for h in mx_holes:
     pts = pts_shift(cherrymx_points(rotate=h[2]), [h[0], h[1]])
     x = [p[0] for p in pts] + [pts[0][0]]
     y = [p[1] for p in pts] + [pts[0][1]]
-    ax.plot(x, y, color='b')
+    ax.plot(x, y, color='g')
 plt.show()
 
