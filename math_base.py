@@ -85,7 +85,7 @@ Angle is list of rotation in radians for each pair of axis.
     
     # Length of vector needs to stay constant for new point.
     v_pol_l = [sqrt(v_cart[i]**2 + v_cart[i+1]**2) for i in range(l_angle)]
-    v_pol_a = [atan(v_cart[i+1] / v_cart[i]) + pi*int(pt[i] < center[i]) \
+    v_pol_a = [(atan(v_cart[i+1] / v_cart[i]) if v_cart[i] != 0.0 else pi/2) + pi*int(pt[i] < center[i]) \
                for i in range(l_angle)]
     
     # Add rotation angle then convert back to cartesian vector.
