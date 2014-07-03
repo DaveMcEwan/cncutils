@@ -3,6 +3,10 @@
 # All parts specified for LHS.
 # RHS should just be a reflection around X=0.
 
+print_stats = 0
+plot = 0
+print_gcode = 1
+
 from math import *
 import sys
 
@@ -137,50 +141,75 @@ fix_holes = gen_polygon_pts(n_fix, [radius-0.5*spc])
 fix_holes = pts_rotate(fix_holes, [3*2*pi/n_fix], center)
 
 # mx_holes is now a list of tuples containing the coordinates and rotations of all switches on LHS.
-out = []
-out += ['Operations:']
-out += ['\tCherryMX holes:']
-for h in mx_holes:
-    out += ['\t\t(%0.2f, %0.2f) rotate=%d' % (h[0], h[1], degrees(h[2]))]
-out += ['\tFixing holes:']
-for h in fix_holes:
-    out += ['\t\t(%0.2f, %0.2f)' % (h[0], h[1])]
-out += ['\tLED holes: TODO']
-out += ['\tOuter:']
-out += ['\t\tcenter=(%0.2f, %0.2f)' % center]
-out += ['\t\tradius=%0.2f' % radius]
-out += ['\t\tdiameter=%0.2f' % diameter]
-print('\n'.join(out))
+if print_stats:
+    out = []
+    out += ['Operations:']
+    out += ['\tCherryMX holes:']
+    for h in mx_holes:
+        out += ['\t\t(%0.2f, %0.2f) rotate=%d' % (h[0], h[1], degrees(h[2]))]
+    out += ['\tFixing holes:']
+    for h in fix_holes:
+        out += ['\t\t(%0.2f, %0.2f)' % (h[0], h[1])]
+    out += ['\tLED holes: TODO']
+    out += ['\tOuter:']
+    out += ['\t\tcenter=(%0.2f, %0.2f)' % center]
+    out += ['\t\tradius=%0.2f' % radius]
+    out += ['\t\tdiameter=%0.2f' % diameter]
+    print('\n'.join(out))
 
 # TODO: Calculate LED holes.
 # TODO: Plot LED holes.
 # TODO: Generate gcode.
 
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
+if plot:
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as mpatches
+    
+    ax = plt.subplot(111, aspect=1)
+    # Plot path between centers of switch holes.
+    x = [p[0] for p in mx_holes]
+    y = [p[1] for p in mx_holes]
+    ax.plot(x, y, marker='x', color='r')
+    
+    # Plot fixing holes.
+    x = [p[0] for p in fix_holes]
+    y = [p[1] for p in fix_holes]
+    ax.plot(x, y, marker='x', color='g')
+    
+    # Draw circle for outer
+    ax.scatter(center[0], center[1])
+    c = mpatches.Circle(center, radius, fill=False)
+    ax.add_patch(c)
+    
+    # Plot paths for each switch
+    from cherrymx_hole import *
+    for h in mx_holes:
+        pts = pts_shift(cherrymx_points(rotate=h[2]), [h[0], h[1]])
+        x = [p[0] for p in pts] + [pts[0][0]]
+        y = [p[1] for p in pts] + [pts[0][1]]
+        ax.plot(x, y, color='g')
+    plt.show()
 
-ax = plt.subplot(111, aspect=1)
-# Plot path between centers of switch holes.
-x = [p[0] for p in mx_holes]
-y = [p[1] for p in mx_holes]
-ax.plot(x, y, marker='x', color='r')
-
-# Plot fixing holes.
-x = [p[0] for p in fix_holes]
-y = [p[1] for p in fix_holes]
-ax.plot(x, y, marker='x', color='g')
-
-# Draw circle for outer
-ax.scatter(center[0], center[1])
-c = mpatches.Circle(center, radius, fill=False)
-ax.add_patch(c)
-
-# Plot paths for each switch
-from cherrymx_hole import *
-for h in mx_holes:
-    pts = pts_shift(cherrymx_points(rotate=h[2]), [h[0], h[1]])
-    x = [p[0] for p in pts] + [pts[0][0]]
-    y = [p[1] for p in pts] + [pts[0][1]]
-    ax.plot(x, y, color='g')
-plt.show()
-
+if print_gcode:
+    from gcode_base import *
+    from cherrymx_hole import *
+    clearance = 5.0
+    g = []
+    # Set units to mm.
+    g.append('G21')
+    
+    # Move to X0Y0, Zclearance
+    g.append('G90')
+    g.append('G0 Z%s' % floatf(clearance))
+    g.append('G0 X0 Y0')
+    
+    # Cut switch holes.
+    for h in mx_holes:
+        g.append('G0 X%s Y%s' % (floatf(h[0]), floatf(h[1])))
+        g.append(cherrymx_profile(rotate=h[2]))
+        g.append('G90')
+    
+    # Drill fixing holes.
+    g.append(points_drill(fix_holes))
+    
+    print('\n'.join(g))
