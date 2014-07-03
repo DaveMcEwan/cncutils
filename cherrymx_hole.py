@@ -6,6 +6,46 @@ from gcode_base import *
 from gcode_profile_polygon import *
 from math_base import *
 
+def cherrymx_points(
+                    width=14.0,
+                    notch_depth=1.5,
+                    notch_height=4.0,
+                    rotate=0.0,
+                    endmill=0.0,
+                   ): # {{{
+    '''Generate points for polygon used for making CherryMX holes.
+    '''
+
+    assert isinstance(width, float) and width > 0.0
+    assert isinstance(rotate, float) and abs(rotate) <= 2*pi
+    
+    # Calculate points to move to.
+    inner_x = width/2 - endmill/2
+    outer_x = inner_x + notch_depth
+    outer_y = inner_x
+    inner_y =  width/2 - notch_height + endmill/2
+    
+    # Points relative to centre listed in CW direction.
+    pts = [
+           (-inner_x, +inner_y),
+           (-outer_x, +inner_y),
+           (-outer_x, +outer_y),
+           (+outer_x, +outer_y),
+           (+outer_x, +inner_y),
+           (+inner_x, +inner_y),
+           (+inner_x, -inner_y),
+           (+outer_x, -inner_y),
+           (+outer_x, -outer_y),
+           (-outer_x, -outer_y),
+           (-outer_x, -inner_y),
+           (-inner_x, -inner_y),
+          ]
+    
+    # Rotate points around origin here.
+    pts = pts_rotate(pts, [rotate], (0.0, 0.0))
+    
+    return pts
+# }}}
 
 def cherrymx_profile(
                      width=14.0,
@@ -39,33 +79,7 @@ def cherrymx_profile(
     assert isinstance(direction, str) and direction in ['cw', 'ccw']
     assert isinstance(ablpd, bool)
     
-    # Calculate points to move to.
-    inner_x = width/2 - endmill/2
-    outer_x = inner_x + notch_depth
-    outer_y = inner_x
-    inner_y =  width/2 - notch_height + endmill/2
-    
-    # Points relative to centre listed in CW direction.
-    pts = [
-           (-inner_x, +inner_y),
-           (-outer_x, +inner_y),
-           (-outer_x, +outer_y),
-           (+outer_x, +outer_y),
-           (+outer_x, +inner_y),
-           (+inner_x, +inner_y),
-           (+inner_x, -inner_y),
-           (+outer_x, -inner_y),
-           (+outer_x, -outer_y),
-           (-outer_x, -outer_y),
-           (-outer_x, -inner_y),
-           (-inner_x, -inner_y),
-          ]
-    
-    if direction == 'ccw':
-        pts.reverse()
-    
-    # Rotate points around origin here.
-    pts = pts_rotate(pts, [rotate], (0.0, 0.0))
+    pts = cherry_points(width, notch_depth, notch_height, rotate, endmill)
     
     # Initialise gcode lines.
     g = []
