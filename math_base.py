@@ -140,7 +140,7 @@ def pt_shift(pt=(0.0, 0.0), shift=[0.0, 0.0]):
     for i in shift:
         assert isinstance(i, float)
 
-    return tuple([pt[i] + shift[i] for i in range(pt)])
+    return tuple([pt[i] + shift[i] for i in range(l_pt)])
 
 
 def pts_shift(pts=[], shift=[0.0, 0.0]):
