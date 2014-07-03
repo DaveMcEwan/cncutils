@@ -6,9 +6,9 @@ from math_base import *
 
 def points_drill(
                  pts=[],
-                 depth=0.0,
-                 plungerate=0.0,
-                 clearance=0.0,
+                 depth=3.0,
+                 plungerate=500.0,
+                 clearance=5.0,
                 ): # {{{
     '''Generate gcode for drill operations at a number of points.
 Assume spindle is at clearance, and zeroXY, so points are all relative (G91) to
