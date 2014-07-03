@@ -209,3 +209,22 @@ There must be the same number of planes as dimensions, but the value of each
     
     return [pt_reflect(pt, plane) for pt in pts]
 
+
+def gen_polygon_pts(n_pts=3, radius=[1.0]):
+    '''Generate points for a polygon with a number of radiuses.
+This makes it easy to generate shapes with an arbitrary number of sides,
+  regularly angled around the origin.
+A single radius will give a simple shape such as a square, hexagon, etc.
+Multiple radiuses will give complex shapes like stars, gear wheels, ratchet
+  wheels, etc.
+    '''
+    assert isinstance(n_pts, int) and n_pts > 0
+    assert isinstance(radius, list)
+    l_rad = len(radius)
+    assert l_rad > 0
+    for i in radius:
+        assert isinstance(i, float)
+
+    return [pt_rotate((radius[i % l_rad], 0.0), [i*2*pi/n_pts]) \
+            for i in range(n_pts)]
+
