@@ -192,6 +192,7 @@ if plot:
 
 if print_gcode:
     from gcode_base import *
+    from gcode_profile_circle import *
     from cherrymx_hole import *
     clearance = 5.0
     g = []
@@ -206,10 +207,13 @@ if print_gcode:
     # Cut switch holes.
     for h in mx_holes:
         g.append('G0 X%s Y%s' % (floatf(h[0]), floatf(h[1])))
-        g.append(cherrymx_profile(rotate=h[2]))
+        g.append(cherrymx_profile(rotate=h[2], clearance=clearance))
         g.append('G90')
     
     # Drill fixing holes.
-    g.append(points_drill(fix_holes))
+    g.append(points_drill_abs(fix_holes))
+    
+    # Finally cut out boundary.
+    g.append(profile_circle_abs(center, diameter))
     
     print('\n'.join(g))
