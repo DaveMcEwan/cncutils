@@ -66,13 +66,13 @@ if __name__ == '__main__':
     if args.direction == 'ccw':
         offset = offset * -1
     
-    g.append(profile_circle(
-                            diameter=args.diameter,
-                            depth=args.depth,
-                            pitch=args.pitch,
-                            feedrate=args.feedrate,
-                            offset=offset,
-                            direction=args.direction,
-                            roughing=args.roughing,
-                           ))
+    g.append(profile_circle_rel(
+                                diameter=args.diameter,
+                                depth=args.depth,
+                                pitch=args.pitch,
+                                feedrate=args.feedrate,
+                                offset=offset,
+                                direction=args.direction,
+                                roughing=args.roughing,
+                               ))
     print('\n'.join(g))
