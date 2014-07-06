@@ -195,6 +195,12 @@ if print_gcode:
     from gcode_profile_circle import *
     from cherrymx_hole import *
     clearance = 5.0
+    depth = 3.8
+    
+    # Acrlic 400 just on the slow side, 500 definitely too fast.
+    # MDF 660 seems about right.
+    feedrate = 420.0
+    
     g = []
     # Set units to mm.
     g.append('G21')
@@ -207,13 +213,27 @@ if print_gcode:
     # Cut switch holes.
     for h in mx_holes:
         g.append('G0 X%s Y%s' % (floatf(h[0]), floatf(h[1])))
-        g.append(cherrymx_profile(rotate=h[2], clearance=clearance))
+        g.append(cherrymx_profile(
+                                  rotate=h[2],
+                                  clearance=clearance,
+                                  depth=depth,
+                                  pitch=0.8, # MDF=1.0, Acrylic=0.8
+                                  width=13.55,
+                                  feedrate=feedrate,
+                                  ablpd=False,
+                                 ))
         g.append('G90')
     
     # Drill fixing holes.
-    g.append(points_drill_abs(fix_holes))
+    g.append(points_drill_abs(fix_holes, depth=depth))
     
     # Finally cut out boundary.
-    g.append(profile_circle_abs(center, diameter))
+    g.append(profile_circle_abs(
+                                center,
+                                diameter,
+                                depth=depth,
+                                pitch=1.0,
+                                feedrate=feedrate,
+                               ))
     
     print('\n'.join(g))
