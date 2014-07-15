@@ -200,7 +200,7 @@ if print_gcode:
     
     # Acrlic 400 just on the slow side, 500 definitely too fast.
     # MDF 660 seems about right.
-    feedrate = 420.0
+    feedrate = 480.0
     
     g = []
     # Set units to mm.
@@ -219,7 +219,7 @@ if print_gcode:
                                   clearance=clearance,
                                   depth=depth,
                                   pitch=0.8, # MDF=1.0, Acrylic=0.8
-                                  width=13.55,
+                                  width=13.25,
                                   feedrate=feedrate,
                                   ablpd=False,
                                  ))
