@@ -139,6 +139,7 @@ center = (0.0, 0.0)
 n_fix = 6
 fix_holes = gen_polygon_pts(n_fix, [radius-0.5*spc])
 fix_holes = pts_rotate(fix_holes, [3*2*pi/n_fix], center)
+fix_holes = pts_rotate(fix_holes, [radians(11)], center)
 
 # mx_holes is now a list of tuples containing the coordinates and rotations of all switches on LHS.
 if print_stats:
