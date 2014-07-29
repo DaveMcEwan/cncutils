@@ -26,6 +26,33 @@ Last vector is the path between the first and last point, creating a loop.
             for i in range(l_pts)]
 
 
+def dir_between_pts(a=(0.0, 0.0), b=(0.0, 0.0)):
+    '''Return direction between two points on N dimensions.
+List of vectors per pair of dimensions are returned in radians.
+E.g. Where X is "right", Y is "up", Z is "in" on a computer screen, and
+  returned value is [pi/4, -pi/4], then the vector will be coming out the
+  screen over the viewer's right shoulder.
+    '''
+    assert isinstance(a, tuple)
+    assert isinstance(b, tuple)
+    l_pt = len(a)
+    assert l_pt > 1
+    assert l_pt == len(b)
+    for i in a:
+        assert isinstance(i, float)
+    for i in b:
+        assert isinstance(i, float)
+    
+    # Difference used for calculating gradient, giving 2 quadrants of direction.
+    delta = [b[i] - a[i] for i in range(l_pt)]
+    
+    # 180 degree offset to add, giving all 4 quadrants of this pair of
+    #   dimensions.
+    semiturn = [pi * int(b[p] < a[p]) for p in range(l_pt-1)]
+    
+    return [atan(delta[p+1] / delta[p]) + semiturn[p] for p in range(l_pt-1)]
+
+
 def pt_between_pts(a=(0.0, 0.0), b=(0.0, 0.0), t=0.5):
     '''Return the point between two points on N dimensions.
     '''

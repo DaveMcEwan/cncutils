@@ -97,14 +97,6 @@ E.g. Where X is "right", Y is "up", Z is "in" on a computer screen, and
     #   gradients on N-1 planes.
     q0 = Q[0]
     q1 = Q[1]
-    N = len(q0)
     
-    # Difference used for calculating gradient, giving 2 quadrants of direction.
-    delta = [q1[i] - q0[i] for i in range(N)]
-    
-    # 180 degree offset to add, giving all 4 quadrants of this pair of
-    #   dimensions.
-    semiturn = [pi * int(q1[p] < q0[p]) for p in range(N-1)]
-    
-    return [atan(delta[p+1] / delta[p]) + semiturn[p] for p in range(N-1)]
+    return dir_between_pts(q0, q1)
 
