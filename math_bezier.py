@@ -66,7 +66,7 @@ Segment curve into N lines where N is the order of the curve, and accumulate
 
 def dir_on_bezier_curve(P=[(0.0, 0.0)], t=0.5):
     '''Return direction at t on bezier curve defined by control points P.
-List of vectors per pair of dimensions are returned in radian.
+List of vectors per pair of dimensions are returned in radians.
 E.g. Where X is "right", Y is "up", Z is "in" on a computer screen, and
   returned value is [pi/4, -pi/4], then the vector will be coming out the
   screen over the viewer's right shoulder.
