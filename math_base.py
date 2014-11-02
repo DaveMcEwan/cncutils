@@ -193,6 +193,28 @@ def pts_shift(pts=[], shift=[0.0, 0.0]):
     return [pt_shift(pt, shift) for pt in pts]
 
 
+def pt_relative(pt=(0.0, 0.0), shift=[0.0, 0.0], angle=[0.0]):
+    '''Convenience shift+rotate combination.
+    '''
+    assert isinstance(pt, tuple)
+    l_pt = len(pt)
+    assert l_pt > 1
+    for i in pt:
+        assert isinstance(i, float)
+    assert isinstance(shift, list)
+    l_sh = len(shift)
+    assert l_sh == l_pt
+    for i in shift:
+        assert isinstance(i, float)
+    assert isinstance(angle, list)
+    l_angle = len(angle)
+    assert l_angle == l_pt-1
+    for i in angle:
+        assert isinstance(i, float)
+    
+    return pt_rotate(pt_shift(pt, shift), angle, pt)
+
+
 def pt_reflect(pt=(0.0, 0.0), plane=[None, None]):
     '''Return given point reflected around planes in N dimensions.
 There must be the same number of planes as dimensions, but the value of each
