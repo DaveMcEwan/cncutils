@@ -209,7 +209,7 @@ There must be the same number of planes as dimensions, but the value of each
     for i in plane:
         assert isinstance(i, float) or i is None
     
-    return [pt[i] if plane[i] is None else (2*plane[i] - pt[i]) for i in range(l_pt)]
+    return tuple([pt[i] if plane[i] is None else (2*plane[i] - pt[i]) for i in range(l_pt)])
 
 
 def pts_reflect(pts=[], plane=[None, None]):
